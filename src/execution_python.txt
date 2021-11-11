@@ -1,1 +1,1 @@
-python3 plot.py rank.xlsx sankasho.png font_data.json
+python3 plot.py sankasho.png font_data.json excel_data.json

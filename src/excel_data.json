@@ -1,0 +1,14 @@
+{
+    "exel_name" : "rank.xlsx",
+    "first_row": 5,
+    "row_data":{
+        "event": "e",
+        "grade": "f",
+        "rank": "a",
+        "name": "b",
+        "group": "c",
+        "count": "d"
+    },
+    "folder_name": "group",
+    "file_name": "name"
+}

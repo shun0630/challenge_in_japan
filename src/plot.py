@@ -9,37 +9,36 @@ import json
 
 
 #エクセルからデータを読み込む
-def input_data(file_name):
+def input_data(data):
+    file_name = data["exel_name"]
     wb = openpyxl.load_workbook(file_name, data_only=True)
     sheetnames_list = wb.sheetnames
     for sheetname in sheetnames_list:
         sheet = wb.get_sheet_by_name(str(sheetname))
-        rank_data = []
-        group_data = []
+        write_data = []
+        folder_data = []
 
         for row in range(5,sheet.max_row+1):
-            event = sheet['a' + str(3)].value
-            grade = sheet['b' + str(3)].value
-            rank = sheet['a' + str(row)].value
-            name = sheet['b' + str(row)].value
-            group = sheet['c' + str(row)].value
-            count = sheet['d' + str(row)].value
-
-
-            data = {"event":event,"grade":grade ,"rank":"第" + str(rank) + "位", "name":name, "group":group, "count":"記録：" + str(count) + "回"}
-            rank_data.append(data)
-            group_data.append(group)
-    group_data_list = set(group_data)
-    team_data_list = {"rank_data":rank_data, "group_data":group_data_list}
+            data_input = {}
+            for item in data["row_data"]:
+                data_input[item] = sheet[str(data["row_data"][item]) + str(row)].value
+            print(data_input)
+            print(data_input[data["folder_name"]], data_input[data["file_name"]])
+            data_input["output_path"] = "./output/" + str(data_input[data["folder_name"]]) + "/" + str(data_input[data["file_name"]]) + ".png"
+            write_data.append(data_input)
+            folder_data.append(data_input[data["folder_name"]])
+    folder_data_list = set(folder_data)
+    print(folder_data_list)
+    team_data_list = {"write_data":write_data, "folder_data":folder_data_list}
     return team_data_list
     
 
 #団体ごとのフォルダを作成   
-def mkdir_group(group_data_list):
-    shutil.rmtree('./sankasho')
-    os.mkdir("./sankasho")
-    for group in group_data_list:
-        os.mkdir('./sankasho/' + str(group))
+def mkdir_group(folder_data_list):
+    shutil.rmtree('./output')
+    os.mkdir("./output")
+    for group in folder_data_list:
+        os.mkdir('./output/' + str(group))
 
 
 
@@ -79,30 +78,34 @@ def image_write(data, im, font_data_list):
     draw = ImageDraw.Draw(im_copy)
     for write_item in font_data_list:
         draw.text((font_data_list[write_item]["font_width"], font_data_list[write_item]["font_height"]), str(data[write_item]), fill = "black", font = font_data_list[write_item]["font"], anchor='mm')
-    im_copy.save("./sankasho/" + str(data["group"]) + "/" + str(data["name"]) + ".png")    
+    im_copy.save(data["output_path"])    
 
 
 
 def main():
 
-    exel_file_name =  sys.argv[1]
-    image_file = sys.argv[2]
-    font_data_json = sys.argv[3]
+    image_file = sys.argv[1]
+    font_data_json = sys.argv[2]
+    ecxel_data_json = sys.argv[3]
+    
+    #excelデータ(どこに何が書かれているか)の読み込み
+    with open(ecxel_data_json) as f:
+        ecxel_data = json.load(f)
 
     #フォントパラメータの読み込み（サイズ等）
     with open(font_data_json) as f:
         font_data = json.load(f)
 
     # データをエクセルから読み込み
-    team_data_list = input_data(exel_file_name)
+    team_data_list = input_data(ecxel_data)
 
     #団体ごとのフォルダ作成
-    mkdir_group(team_data_list["group_data"])
+    mkdir_group(team_data_list["folder_data"])
 
     #書き込み用画像の用意
     im = Image.open(image_file)
 
-    for team_data in team_data_list["rank_data"]:
+    for team_data in team_data_list["write_data"]:
         #書き込み用データのセット
         im = Image.open(image_file)
 
