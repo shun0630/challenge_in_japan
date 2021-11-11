@@ -1,0 +1,32 @@
+{
+    "event":{
+        "size": 500,
+        "height": 1500,
+        "width": 200
+    },
+    "grade":{
+        "size": 400,
+        "height":1700,
+        "width": 200
+    },
+    "rank":{
+        "size": 700,
+        "height": 2300,
+        "width": 200
+    },
+    "name":{
+        "size": 500,
+        "height": 1100,
+        "width": 200
+    },
+    "group":{
+        "size": 300,
+        "height": 7000,
+        "width": 400
+    },
+    "count":{
+        "size": 500,
+        "height": 2700,
+        "width": 200
+    }
+}
